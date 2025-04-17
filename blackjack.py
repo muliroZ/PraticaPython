@@ -1,4 +1,11 @@
+# Feito por: muliroZ
+# Github: github.com/muliroZ
+# Instagram: muliro_dkl
+# 
+#                                                   -Blackjack-                                                                                        
+
 import random
+from time import sleep
 
 class Carta:
     def __init__(self, valor, naipe):
@@ -58,7 +65,7 @@ class Jogador:
         return total
 
     def __repr__(self):
-        return f'{self.nome} está com as cartas: {self.mao} (Total: {self.val_mao()} pontos)'
+        return f'{self.nome} está com as cartas -> {self.mao} (Total: {self.val_mao()} pontos)'
     
 class Dealer:
     def __init__(self):
@@ -84,89 +91,125 @@ class Dealer:
         return total
     
     def __repr__(self):
-        return f'O dealer está com as cartas: {self.mao} (Total: {self.pontos()} pontos)'
-    
+        return f'O dealer está com as cartas -> {self.mao} (Total: {self.pontos()} pontos)'
+
+class Aposta:
+    def __init__(self):
+        pass
+
+
+
 baralho = Baralho()
 dealer = Dealer()
 jogador = Jogador(input('Digite seu nome: ').strip())
 
-fim = 's'
+# Gameplay
+fim = ''
 
-while fim == 's':
+while fim == '':
+    sleep(0.7)
     print('\n************* !BLACKJACK! *************\n')
+    sleep(0.7)
 
     jogador.pedir_carta(baralho.distribuir())
     dealer.dealer_carta(baralho.distribuir())
     jogador.pedir_carta(baralho.distribuir())
 
     print(jogador)
+    sleep(1.0)
     print(dealer)
+    sleep(1.6)
 
     opc = str(input('Continuar (c) ou Parar (p)?: ').strip().lower())
 
     match opc:
         case 'c':
             jogador.pedir_carta(baralho.distribuir())
-            print(f'{jogador}\n')
+            sleep(1.0)
+            print(f'\n{jogador}\n')
             if jogador.val_mao() > 21:
-                print(f'Você perdeu!!! Total: {jogador.val_mao()} pontos')
+                sleep(1.2)
+                print(f'Você perdeu!!! Total: {jogador.val_mao()} pontos\n')
             elif jogador.val_mao() == 21:
-                print('Você atingiu a pontuação máxima!!! Total: 21 pontos')
+                sleep(1.2)
+                print('Você atingiu a pontuação máxima!!! Total: 21 pontos\n')
             else:
                 while jogador.val_mao() < 21:
+                    sleep(1.0)
                     opt = str(input('Continuar (c) ou Parar (p)?: ').strip().lower())
                     if opt == 'c':
                         jogador.pedir_carta(baralho.distribuir())
-                        print(jogador)
+                        sleep(1.2)
+                        print(f'\n{jogador}')
                         if jogador.val_mao() > 21:
-                            print(f'Você perdeu!!! Total: {jogador.val_mao()} pontos')
+                            sleep(1.2)
+                            print(f'Você perdeu!!! Total: {jogador.val_mao()} pontos\n')
                         elif jogador.val_mao() == 21:
-                            print('Você atingiu a pontuação máxima!!! Total: 21 pontos')
+                            sleep(1.2)
+                            print('Você atingiu a pontuação máxima!!! Total: 21 pontos\n')
                     else:
                         dealer.dealer_carta(baralho.distribuir())
-                        print(f'{dealer}')
+                        sleep(1.2)
+                        print(f'{dealer}\n')
                         if dealer.pontos() == 21:
-                            print(f'O Dealer conseguiu um *Blackjack*!!! {dealer.mao}.')
+                            sleep(1.2)
+                            print(f'O Dealer conseguiu um *Blackjack*!!! {dealer.mao}.\n')
                             break
                         else:
                             while dealer.pontos() < 17:
                                 dealer.dealer_carta(baralho.distribuir())
-                                print(f'\nO Dealer compra uma carta!\nCartas do Dealer: {dealer.mao}\nTotal: {dealer.pontos()} pontos\n')
+                                sleep(1.2)
+                                print(f'\nO Dealer compra uma carta!\nCartas do Dealer -> {dealer.mao}\nTotal: {dealer.pontos()} pontos\n')
 
                         if dealer.pontos() > 21:
-                            print(f'O Dealer estourou!!! Você ganhou!!! {dealer.mao} Total: {dealer.pontos()} pontos')
+                            sleep(1.2)
+                            print(f'O Dealer estourou!!! Você ganhou!!! {dealer.mao} Total: {dealer.pontos()} pontos\n')
                             break
                         else:
+                            sleep(1.2)
                             print(jogador)
-                            print(dealer)
+                            sleep(1.5)
+                            print(dealer, end='')
                             if jogador.val_mao() > dealer.pontos():
-                                print('Parabéns, você ganhou!!!')
+                                sleep(1.5)
+                                print('Parabéns, você ganhou!!!\n')
                             elif jogador.val_mao() < dealer.pontos():
-                                print('Você perdeu, que pena!!!')
+                                sleep(1.5)
+                                print('Você perdeu, que pena!!!\n')
                             else:
-                                print('Houve um empate!')
+                                sleep(1.5)
+                                print('Houve um empate!\n')
                             break
         case 'p':
             dealer.dealer_carta(baralho.distribuir())
-            print(f'{dealer}\n')
+            sleep(1.2)
+            print(f'\n{dealer}\n')
             if dealer.pontos() == 21:
-                print(f'O Dealer conseguiu um *Blackjack*!!! {dealer.mao}.')
+                sleep(1.2)
+                print(f'O Dealer conseguiu um *Blackjack*!!! {dealer.mao}.\n')
             else:
                 while dealer.pontos() < 17:
                     dealer.dealer_carta(baralho.distribuir())
-                    print(f'\nO Dealer compra uma carta!\nCartas do Dealer: {dealer.mao}\nTotal: {dealer.pontos()} pontos\n')
+                    sleep(1.2)
+                    print(f'\nO Dealer compra uma carta!\nCartas do Dealer -> {dealer.mao}\nTotal: {dealer.pontos()} pontos\n')
 
                 if dealer.pontos() > 21:
-                    print(f'O Dealer estourou!!! Você ganhou!!! {dealer.mao} Total: {dealer.pontos()} pontos')
+                    sleep(1.2)
+                    print(f'O Dealer estourou!!! Você ganhou!!! {dealer.mao} Total: {dealer.pontos()} pontos\n')
                 else:
+                    sleep(1.2)
                     print(jogador)
+                    sleep(1.2)
                     print(dealer)
                     if jogador.val_mao() > dealer.pontos():
-                        print('Parabéns, você ganhou!!!')
+                        sleep(1.5)
+                        print('\nParabéns, você ganhou!!!\n')
                     elif jogador.val_mao() < dealer.pontos():
-                        print('Você perdeu, que pena!!!')
+                        sleep(1.5)
+                        print('\nVocê perdeu, que pena!!!\n')
                     else:
-                        print('Houve um empate!')
+                        sleep(1.5)
+                        print('\nHouve um empate!\n')
 
     baralho.recolher(jogador.mao)
     baralho.recolher(dealer.mao)
@@ -174,4 +217,4 @@ while fim == 's':
     jogador.mao.clear()
     dealer.mao.clear()
 
-    fim = input('Jogar outra rodada? (s ou n): ').strip().lower()
+    fim = input('Jogar outra rodada? (Aperte "Enter" para continuar):').strip()
