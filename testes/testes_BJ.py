@@ -2,7 +2,7 @@
 # Github: github.com/muliroZ
 # Instagram: muliro_dkl
 # 
-#                                                   -Blackjack-                                                                                        
+#                                                   -Blackjack- Teste                                                                                       
 
 import random
 from time import sleep
@@ -122,11 +122,11 @@ def resultado_partida():
     print(jogador)
     sleep(1.2)
     print(dealer)
-    if jogador.val_mao() > dealer.pontos() and jogador.val_mao() <= 21:
+    if (jogador.val_mao() > dealer.pontos() and jogador.val_mao() <= 21) or (jogador.val_mao() < dealer.pontos() and dealer.pontos() > 21 and jogador.val_mao() <= 21):
         sleep(1.5)
-        print(f'\nParabéns, você ganhou!!! (+{aposta*2} Fichas)\n')
         jogador.fichas += aposta*2
-    elif jogador.val_mao() < dealer.pontos() and dealer.pontos() <= 21:
+        print(f'\nParabéns, você ganhou!!! (+{aposta*2} Fichas) Fichas -> {jogador.fichas}\n')
+    elif (jogador.val_mao() < dealer.pontos() and dealer.pontos() <= 21) or (jogador.val_mao() > dealer.pontos() and jogador.val_mao() > 21 and dealer.pontos() <= 21):
         sleep(1.5)
         print(f'\nVocê perdeu, que pena!!!  (-{aposta} Fichas)\n')
     elif (jogador.val_mao() == dealer.pontos()) or (jogador.val_mao() > 21 and dealer.pontos() > 21):
@@ -140,8 +140,10 @@ def compra():
     print(f'\n{jogador}')
     if jogador.val_mao() > 21:
         sleep(1.2)
-        print(f'Você estourou!!! Total: {jogador.val_mao()} pontos (-{aposta} Fichas)\n')
-        return True
+        print(f'Você estourou!!! Total: {jogador.val_mao()} pontos\n')
+        if dealer_vez():
+            resultado_partida()
+        return False
     elif jogador.val_mao() == 21:
         sleep(1.2)
         print('Você atingiu a pontuação máxima!!! Total: 21 pontos\n')
@@ -169,12 +171,15 @@ def cont():
 
 def dobro():
     global aposta
-    aposta *= 2
-    print(f'\nAposta DOBRADA: {aposta//2} -> {aposta} Fichas')
-    print('')
-    if compra():
-        if dealer_vez():
-            resultado_partida()
+    if jogador.fichas < aposta:
+        return True
+    else:
+        jogador.apostar(aposta)
+        aposta *= 2
+        print(f'\nAposta DOBRADA: {aposta//2} -> {aposta} Fichas\n')
+        if compra():
+            if dealer_vez():
+                resultado_partida()
 
 def seguro():
     if jogador.val_mao() == 21 and dealer.pontos() == 11:
@@ -195,15 +200,25 @@ def seguro():
         opt = int(input('-> '))
 
         if opt == 1:
-            jogador.fichas -= aposta/2
+            jogador.fichas -= aposta//2
             return True
-
-    elif jogador.val_mao() == 21 and dealer.pontos() != 11:
-        print(f'Você conseguiu um BLACKJACK! (+{aposta*2 + aposta/2} Fichas)')
-        jogador.fichas += aposta*2 + aposta/2
-        return False
     
     else: return None
+
+# Gameplay
+def gameplay():
+    opc = str(input('Continuar (c), Parar (p) ou Dobrar (d)?: ').strip().lower())
+    if opc not in ['c', 'p', 'd']: return True
+
+    match opc:
+        case 'c':
+            cont()
+        case 'p':
+            stop()
+        case 'd':
+            if dobro():
+                print('Sem fichas para dobrar!')
+                cont()
 
 # Controla o fim da rodada/jogo
 def final():
@@ -217,16 +232,22 @@ def final():
     if fim != '':
         return True
 
-# Gameplay
+# Loop principal
 while True:
     while True:
+        fim = ''
         sleep(0.7)
         print('\n************* - ! BLACKJACK ! - *************\n')
         sleep(0.7)
 
         print(f'Você tem {jogador.fichas} fichas.')
+        if jogador.fichas <= 0:
+            print('Você não tem mais fichas...\nAdeus...')
+            break
         aposta = jogador.apostar(int(input('Sua aposta -> ')))
-        if aposta == False: break
+        aposta_seguro = 0
+        if aposta == False:
+            break
         sleep(0.7)
 
         jogador.pedir_carta(baralho.distribuir())
@@ -239,28 +260,31 @@ while True:
         print(dealer)
         sleep(1.5)
 
+        if jogador.val_mao() == 21 and dealer.pontos() != 11:
+            jogador.fichas += int(aposta*2 + aposta/2)
+            print(f'Você conseguiu um BLACKJACK! (+{int(aposta*2 + aposta/2)} Fichas) Fichas: {int(jogador.fichas)}\n')
+            print('Jogar outra rodada? (Aperte "Enter" para continuar):')
+            if final():
+                fim = 'ok'
+                break
+
         if seguro():
             aposta_seguro = aposta/2
         elif seguro() == False:
             break
         else: None
 
-        opc = str(input('Continuar (c), Parar (p) ou Dobrar (d)?: ').strip().lower())
-        if opc not in ['c', 'p', 'd']: break
-
-        match opc:
-            case 'c':
-                cont()
-            case 'p':
-                stop()
-            case 'd':
-                dobro()
+        if gameplay():
+            break
 
         print('Jogar outra rodada? (Aperte "Enter" para continuar):')
         if final():
+            fim = 'ok'
             break
-
-    print('Me parece que você fez algo invalido! :( (Enter para reiniciar)')
+    
+    # Verificações do final do jogo
+    if seguro() == False or fim == 'ok' or jogador.fichas <= 0: break
+    print('\nMe parece que você fez algo invalido! :( (Enter para reiniciar)')
     if final():
         break
 
